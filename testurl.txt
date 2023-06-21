@@ -1,0 +1,7 @@
+curl -i http://localhost:8080/v1/greetings/deepak
+
+//Add course
+curl -i \
+-d '{"id": 1, "name":"Build restful api with spring","category":"Development"}' \
+-H "Content-Type: application/json" \
+-X POST http://localhost:8080/v1/course
