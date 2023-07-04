@@ -5,3 +5,16 @@ curl -i \
 -d '{"id": 1, "name":"Build restful api with spring","category":"Development"}' \
 -H "Content-Type: application/json" \
 -X POST http://localhost:8080/v1/course
+
+
+curl -i \
+-d '{"id": 2, "name":"SQL ","category":"Development"}' \
+-H "Content-Type: application/json" \
+-X POST http://localhost:8080/v1/course
+
+curl -i http://localhost:8080/v1/course
+
+curl -i \
+-d '{"name":"SQL updated", "category":"Development"}' \
+-H "Content-Type: application/json" \
+-X PUT http://localhost:8080/v1/course/2
