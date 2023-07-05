@@ -82,4 +82,11 @@ class CourseControllerIntegrationTest {
         Assertions.assertTrue(courseDto.name == updateCourse!!.name)
         Assertions.assertTrue(courseDto.name == remoteCourse!!.name && remoteCourse.id == updateCourse.id)
     }
+
+    @Test
+    fun deleteCourseTest(){
+        val course = Course(id = null, name = "Kotlin course", category = "Development")
+        courseRepository.save(course)
+        webTestClient.delete().uri("/v1/course/${course.id}").exchange().expectStatus().isNoContent
+    }
 }

@@ -18,3 +18,5 @@ curl -i \
 -d '{"name":"SQL updated", "category":"Development"}' \
 -H "Content-Type: application/json" \
 -X PUT http://localhost:8080/v1/course/2
+
+curl -i -X DELETE http://localhost:8080/v1/course/2

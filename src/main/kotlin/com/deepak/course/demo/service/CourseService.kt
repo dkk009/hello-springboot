@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 class CourseService constructor(private val repository: CourseRepository) {
 
     companion object : KLogging()
+
     fun addCourse(courseDTO: CourseDTO): CourseDTO {
         val courseEntity = courseDTO.let {
             Course(id = null, name = it.name, category = it.category)
@@ -24,13 +25,13 @@ class CourseService constructor(private val repository: CourseRepository) {
 
     fun getAllCourses(): List<CourseDTO> {
         return repository.findAll().map {
-            CourseDTO(it.id, it.name,it.category)
+            CourseDTO(it.id, it.name, it.category)
         }
     }
 
     fun updateCourse(courseId: Int, courseDTO: CourseDTO): CourseDTO {
         val course = repository.findById(courseId)
-        if(course.isPresent) {
+        if (course.isPresent) {
             val courseEntity = courseDTO.let {
                 Course(id = courseId, name = courseDTO.name, category = courseDTO.category)
             }
@@ -38,16 +39,25 @@ class CourseService constructor(private val repository: CourseRepository) {
             return courseEntity.let {
                 CourseDTO(id = courseEntity.id, name = courseEntity.name, category = courseEntity.category)
             }
-        }else {
+        } else {
             throw EntityNotFoundException(resourceId = courseId)
         }
     }
 
     fun getCourse(courseId: Int): CourseDTO {
         val course = repository.findById(courseId)
-         if(course.isPresent){
+        if (course.isPresent) {
             return CourseDTO(id = course.get().id, name = course.get().name, category = course.get().category)
-        }else {
+        } else {
+            throw EntityNotFoundException(resourceId = courseId)
+        }
+    }
+
+    fun deleteCourse(courseId: Int) {
+        val course = repository.findById(courseId)
+        if (course.isPresent) {
+            repository.delete(course.get())
+        } else {
             throw EntityNotFoundException(resourceId = courseId)
         }
     }

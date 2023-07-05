@@ -3,6 +3,7 @@ package com.deepak.course.demo.controller
 import com.deepak.course.demo.dto.CourseDTO
 import com.deepak.course.demo.service.CourseService
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -34,5 +35,11 @@ class CourseController  constructor(private val courseService: CourseService){
     @GetMapping("/{courseId}")
     fun getCourse(@PathVariable("courseId") courseId: Int): CourseDTO{
         return courseService.getCourse(courseId)
+    }
+
+    @DeleteMapping("/{courseId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteCourse(@PathVariable("courseId") courseId: Int) {
+        courseService.deleteCourse(courseId)
     }
 }
