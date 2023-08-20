@@ -89,4 +89,12 @@ class CourseControllerIntegrationTest {
         courseRepository.save(course)
         webTestClient.delete().uri("/v1/course/${course.id}").exchange().expectStatus().isNoContent
     }
+    @Test
+    fun addCourseTestValidation() {
+        val courseDTO = CourseDTO(id = null, name = "", category = "")
+        val savedCourseDTO = webTestClient.post().uri("/v1/course").bodyValue(courseDTO)
+            .exchange().expectStatus().isBadRequest.expectBody(String::class.java).returnResult().responseBody
+        println("Response:$savedCourseDTO")
+        Assertions.assertTrue(savedCourseDTO != null)
+    }
 }
