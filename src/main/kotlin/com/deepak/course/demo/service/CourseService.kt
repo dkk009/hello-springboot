@@ -23,9 +23,15 @@ class CourseService constructor(private val repository: CourseRepository) {
         }
     }
 
-    fun getAllCourses(): List<CourseDTO> {
-        return repository.findAll().map {
-            CourseDTO(it.id, it.name, it.category)
+    fun getAllCourses(courseName: String?): List<CourseDTO> {
+        return courseName?.let {
+            repository.findByCourseName(courseName).map {
+                CourseDTO(it.id, it.name, it.category)
+            }
+        } ?: kotlin.run {
+            repository.findAll().map {
+                CourseDTO(it.id, it.name, it.category)
+            }
         }
     }
 

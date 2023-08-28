@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
+import org.springframework.web.util.UriComponentsBuilder
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -62,12 +63,15 @@ class CourseControllerIntegrationTest {
 
     @Test
     fun getSingleCourseTest() {
-        val remoteCourseList = webTestClient.get().uri("/v1/course").exchange().expectStatus().is2xxSuccessful.expectBodyList<CourseDTO>().returnResult().responseBody
-        val id = remoteCourseList?.get(0)?.id?:1
+        val remoteCourseList =
+            webTestClient.get().uri("/v1/course").exchange().expectStatus().is2xxSuccessful.expectBodyList<CourseDTO>()
+                .returnResult().responseBody
+        val id = remoteCourseList?.get(0)?.id ?: 1
         println("Remote course List:$remoteCourseList")
-        val remoteCourse = webTestClient.get().uri("/v1/course/$id").exchange().expectStatus().is2xxSuccessful.expectBody(
-            CourseDTO::class.java
-        ).returnResult().responseBody
+        val remoteCourse =
+            webTestClient.get().uri("/v1/course/$id").exchange().expectStatus().is2xxSuccessful.expectBody(
+                CourseDTO::class.java
+            ).returnResult().responseBody
         Assertions.assertTrue(remoteCourse!!.id == id)
 
     }
@@ -75,20 +79,26 @@ class CourseControllerIntegrationTest {
     @Test
     fun updateSingleCourseTest() {
         val courseDto = CourseDTO(id = null, name = "Kotlin course", category = "Development")
-        val remoteCourseList = webTestClient.get().uri("/v1/course").exchange().expectStatus().is2xxSuccessful.expectBodyList<CourseDTO>().returnResult().responseBody
-        val id = remoteCourseList?.get(0)?.id?:1
-        val updateCourse = webTestClient.put().uri("/v1/course/$id").bodyValue(courseDto).exchange().expectStatus().is2xxSuccessful.expectBody<CourseDTO>().returnResult().responseBody
-        val remoteCourse = webTestClient.get().uri("v1/course/$id").exchange().expectStatus().is2xxSuccessful.expectBody<CourseDTO>().returnResult().responseBody
+        val remoteCourseList =
+            webTestClient.get().uri("/v1/course").exchange().expectStatus().is2xxSuccessful.expectBodyList<CourseDTO>()
+                .returnResult().responseBody
+        val id = remoteCourseList?.get(0)?.id ?: 1
+        val updateCourse = webTestClient.put().uri("/v1/course/$id").bodyValue(courseDto).exchange()
+            .expectStatus().is2xxSuccessful.expectBody<CourseDTO>().returnResult().responseBody
+        val remoteCourse =
+            webTestClient.get().uri("v1/course/$id").exchange().expectStatus().is2xxSuccessful.expectBody<CourseDTO>()
+                .returnResult().responseBody
         Assertions.assertTrue(courseDto.name == updateCourse!!.name)
         Assertions.assertTrue(courseDto.name == remoteCourse!!.name && remoteCourse.id == updateCourse.id)
     }
 
     @Test
-    fun deleteCourseTest(){
+    fun deleteCourseTest() {
         val course = Course(id = null, name = "Kotlin course", category = "Development")
         courseRepository.save(course)
         webTestClient.delete().uri("/v1/course/${course.id}").exchange().expectStatus().isNoContent
     }
+
     @Test
     fun addCourseTestValidation() {
         val courseDTO = CourseDTO(id = null, name = "", category = "")
@@ -96,5 +106,16 @@ class CourseControllerIntegrationTest {
             .exchange().expectStatus().isBadRequest.expectBody(String::class.java).returnResult().responseBody
         println("Response:$savedCourseDTO")
         Assertions.assertTrue(savedCourseDTO != null)
+    }
+
+    @Test
+    fun getCoursesBasedOnName() {
+        val uri = UriComponentsBuilder.fromUriString("/v1/course").queryParam("courseName", "Test course1").build()
+            .toUriString()
+        val courseList =
+            webTestClient.get().uri(uri).exchange().expectStatus().is2xxSuccessful.expectBodyList(CourseDTO::class.java)
+                .returnResult().responseBody
+        println("Course List:$courseList")
+        Assertions.assertEquals(1, courseList?.size)
     }
 }

@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.test.web.reactive.server.expectBody
-import java.lang.RuntimeException
 
 @WebMvcTest(controllers = [CourseController::class])
 @AutoConfigureWebTestClient
@@ -44,7 +42,7 @@ class CourseControllerUnitTest {
 
     @Test
     fun getCourseListTest() {
-        every { courseServiceMokk.getAllCourses() }.returnsMany(listOf<CourseDTO>(getCourseDTO(id = 1)))
+        every { courseServiceMokk.getAllCourses(any()) }.returnsMany(listOf<CourseDTO>(getCourseDTO(id = 1)))
         val remoteData = webTestClient.get().uri("/v1/course").exchange()
             .expectStatus().is2xxSuccessful.expectBodyList(CourseDTO::class.java).returnResult().responseBody
         Assertions.assertTrue(remoteData?.first()?.id == 1)
