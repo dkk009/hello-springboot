@@ -31,6 +31,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 	testImplementation("io.mockk:mockk:1.13.4")
 	testImplementation("com.ninja-squad:springmockk:4.0.2")
+    implementation(kotlin("stdlib-jdk8"))
 
 }
 
@@ -51,4 +52,12 @@ sourceSets{
 			setSrcDirs(listOf("src/integration/kotlin","src/test/kotlin"))
 		}
 	}
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "17"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "17"
 }
