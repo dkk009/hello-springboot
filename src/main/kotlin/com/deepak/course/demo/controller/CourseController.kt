@@ -2,7 +2,6 @@ package com.deepak.course.demo.controller
 
 import com.deepak.course.demo.dto.CourseDTO
 import com.deepak.course.demo.service.CourseService
-import com.deepak.course.demo.service.InstructorService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated

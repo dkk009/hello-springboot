@@ -33,12 +33,12 @@ class InstructorControllerIntegrationTest {
 
     @Test
     fun getInstructor() {
-              val instructorList =
-                  webTestClient.get().uri("/v1/instructor").exchange().expectStatus().is2xxSuccessful.expectBodyList(
-                      InstructorDTO::class.java
-                  ).returnResult().responseBody
+        val instructorList =
+            webTestClient.get().uri("/v1/instructor").exchange().expectStatus().is2xxSuccessful.expectBodyList(
+                InstructorDTO::class.java
+            ).returnResult().responseBody
 
-              val id = instructorList!!.first().id
+        val id = instructorList!!.first().id
         val response = webTestClient.get().uri("/v1/instructor/$id").exchange()
             .expectStatus().is2xxSuccessful.expectBody<List<InstructorDTO>>().returnResult().responseBody
         assert(response!!.size == 1)

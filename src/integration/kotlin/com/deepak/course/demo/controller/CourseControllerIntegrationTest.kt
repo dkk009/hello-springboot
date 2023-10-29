@@ -1,7 +1,6 @@
 package com.deepak.course.demo.controller
 
 import com.deepak.course.demo.dto.CourseDTO
-import com.deepak.course.demo.dto.InstructorDTO
 import com.deepak.course.demo.entity.Course
 import com.deepak.course.demo.entity.Instructor
 import com.deepak.course.demo.repository.CourseRepository
@@ -29,8 +28,10 @@ class CourseControllerIntegrationTest {
 
     @Autowired
     lateinit var courseRepository: CourseRepository
+
     @Autowired
     lateinit var instructorRepository: InstructorRepository
+
     @BeforeEach
     fun setUp() {
         courseRepository.deleteAll()
@@ -46,9 +47,10 @@ class CourseControllerIntegrationTest {
 
     @Test
     fun addCourseTest() {
-        val instructor  = Instructor(id = null, name = "Instructor entity")
+        val instructor = Instructor(id = null, name = "Instructor entity")
         instructorRepository.save(instructor)
-        val courseDTO = CourseDTO(id = null, name = "Kotlin course", category = "Development", instructorId = instructor.id)
+        val courseDTO =
+            CourseDTO(id = null, name = "Kotlin course", category = "Development", instructorId = instructor.id)
         val savedCourseDto =
             webTestClient.post().uri("/v1/course").bodyValue(courseDTO).exchange().expectStatus().isCreated.expectBody(
                 CourseDTO::class.java
@@ -58,9 +60,10 @@ class CourseControllerIntegrationTest {
 
     @Test
     fun getAllCourseTest() {
-        val instructor  = Instructor(id = null, name = "Instructor entity")
+        val instructor = Instructor(id = null, name = "Instructor entity")
         instructorRepository.save(instructor)
-        val courseDTO = CourseDTO(id = null, name = "Kotlin course", category = "Development", instructorId = instructor.id)
+        val courseDTO =
+            CourseDTO(id = null, name = "Kotlin course", category = "Development", instructorId = instructor.id)
         val savedCourseDto =
             webTestClient.post().uri("/v1/course").bodyValue(courseDTO).exchange().expectStatus().isCreated.expectBody(
                 CourseDTO::class.java
@@ -91,9 +94,10 @@ class CourseControllerIntegrationTest {
 
     @Test
     fun updateSingleCourseTest() {
-        val instructor  = Instructor(id = null, name = "Instructor entity")
+        val instructor = Instructor(id = null, name = "Instructor entity")
         instructorRepository.save(instructor)
-        val courseDto = CourseDTO(id = null, name = "Kotlin course", category = "Development", instructorId = instructor.id)
+        val courseDto =
+            CourseDTO(id = null, name = "Kotlin course", category = "Development", instructorId = instructor.id)
         val remoteCourseList =
             webTestClient.get().uri("/v1/course").exchange().expectStatus().is2xxSuccessful.expectBodyList<CourseDTO>()
                 .returnResult().responseBody
@@ -109,7 +113,7 @@ class CourseControllerIntegrationTest {
 
     @Test
     fun deleteCourseTest() {
-        val instructor  = Instructor(id = null, name = "Instructor entity")
+        val instructor = Instructor(id = null, name = "Instructor entity")
         instructorRepository.save(instructor)
         val course = Course(id = null, name = "Kotlin course", category = "Development", instructor = instructor)
         courseRepository.save(course)
