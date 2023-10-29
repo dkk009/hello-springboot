@@ -2,6 +2,7 @@ package com.deepak.course.demo.controller
 
 import com.deepak.course.demo.dto.CourseDTO
 import com.deepak.course.demo.service.CourseService
+import com.deepak.course.demo.service.InstructorService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/v1/course")
 @Validated
-class CourseController constructor(private val courseService: CourseService) {
+class CourseController constructor(
+    private val courseService: CourseService,
+) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

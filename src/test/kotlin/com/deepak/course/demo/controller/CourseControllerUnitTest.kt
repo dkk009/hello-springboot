@@ -24,7 +24,7 @@ class CourseControllerUnitTest {
 
     @Test
     fun addCourseTest() {
-        val courseDTO = CourseDTO(id = null, category = "category", name = "name")
+        val courseDTO = CourseDTO(id = null, category = "category", name = "name", instructorId = 1)
         every { courseServiceMokk.addCourse(any()) } returns getCourseDTO(id = 1)
         val remoteData = webTestClient.post().uri("/v1/course").bodyValue(courseDTO).exchange()
             .expectStatus().is2xxSuccessful.expectBody(CourseDTO::class.java).returnResult().responseBody
@@ -63,14 +63,14 @@ class CourseControllerUnitTest {
         webTestClient.delete().uri("/v1/course/1").exchange().expectStatus().isNoContent
     }
 
-    private fun getCourseDTO(id: Int? = null, category: String = "category", name: String = "name"): CourseDTO {
-        return CourseDTO(id, name, category)
+    private fun getCourseDTO(id: Int? = null, category: String = "category", name: String = "name", instructorId:Int = 1): CourseDTO {
+        return CourseDTO(id, name, category, instructorId)
     }
 
 
     @Test
     fun `add course runtime exception`() {
-        val courseDt = CourseDTO(id = null, name = "test", category = "test")
+        val courseDt = CourseDTO(id = null, name = "test", category = "test", instructorId = 1)
         val errorMessage = "Unexpected error occurred"
         every { courseServiceMokk.addCourse(any()) } throws RuntimeException(errorMessage)
         val resp = webTestClient.post().uri("/v1/course").bodyValue(courseDt).exchange()
@@ -83,7 +83,7 @@ class CourseControllerUnitTest {
     @Test
     fun `add course missing parameter exception`() {
         val courseDt = CourseDTO(id = null, name = "", category = "")
-        val errorMessage = "Course category should not be blank,Course name should not be blank"
+        val errorMessage = "Course category should not be blank,Course name should not be blank,Instructor id should not be null"
         every { courseServiceMokk.addCourse(any()) } throws RuntimeException(errorMessage)
         val resp = webTestClient.post().uri("/v1/course").bodyValue(courseDt).exchange()
             .expectStatus().isBadRequest.expectBody(String::class.java).returnResult().responseBody

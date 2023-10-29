@@ -1,9 +1,13 @@
 package com.deepak.course.demo.controller
 
 import com.deepak.course.demo.dto.CourseDTO
+import com.deepak.course.demo.dto.InstructorDTO
 import com.deepak.course.demo.entity.Course
+import com.deepak.course.demo.entity.Instructor
 import com.deepak.course.demo.repository.CourseRepository
+import com.deepak.course.demo.repository.InstructorRepository
 import com.deepak.course.demo.util.courseList
+import com.deepak.course.demo.util.instructorList
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,19 +29,26 @@ class CourseControllerIntegrationTest {
 
     @Autowired
     lateinit var courseRepository: CourseRepository
-
+    @Autowired
+    lateinit var instructorRepository: InstructorRepository
     @BeforeEach
     fun setUp() {
         courseRepository.deleteAll()
+        val instructorList = instructorRepository.saveAll(instructorList.map {
+            Instructor(id = null, name = it.name)
+        })
+
         courseRepository.saveAll(courseList.map {
-            Course(name = it.name, category = it.category, id = null)
+            Course(name = it.name, category = it.category, id = null, instructor = instructorList.first())
         })
         println(" I am setup method, I suppose to be called before every test")
     }
 
     @Test
     fun addCourseTest() {
-        val courseDTO = CourseDTO(id = null, name = "Kotlin course", category = "Development")
+        val instructor  = Instructor(id = null, name = "Instructor entity")
+        instructorRepository.save(instructor)
+        val courseDTO = CourseDTO(id = null, name = "Kotlin course", category = "Development", instructorId = instructor.id)
         val savedCourseDto =
             webTestClient.post().uri("/v1/course").bodyValue(courseDTO).exchange().expectStatus().isCreated.expectBody(
                 CourseDTO::class.java
@@ -47,7 +58,9 @@ class CourseControllerIntegrationTest {
 
     @Test
     fun getAllCourseTest() {
-        val courseDTO = CourseDTO(id = null, name = "Kotlin course", category = "Development")
+        val instructor  = Instructor(id = null, name = "Instructor entity")
+        instructorRepository.save(instructor)
+        val courseDTO = CourseDTO(id = null, name = "Kotlin course", category = "Development", instructorId = instructor.id)
         val savedCourseDto =
             webTestClient.post().uri("/v1/course").bodyValue(courseDTO).exchange().expectStatus().isCreated.expectBody(
                 CourseDTO::class.java
@@ -78,7 +91,9 @@ class CourseControllerIntegrationTest {
 
     @Test
     fun updateSingleCourseTest() {
-        val courseDto = CourseDTO(id = null, name = "Kotlin course", category = "Development")
+        val instructor  = Instructor(id = null, name = "Instructor entity")
+        instructorRepository.save(instructor)
+        val courseDto = CourseDTO(id = null, name = "Kotlin course", category = "Development", instructorId = instructor.id)
         val remoteCourseList =
             webTestClient.get().uri("/v1/course").exchange().expectStatus().is2xxSuccessful.expectBodyList<CourseDTO>()
                 .returnResult().responseBody
@@ -94,7 +109,9 @@ class CourseControllerIntegrationTest {
 
     @Test
     fun deleteCourseTest() {
-        val course = Course(id = null, name = "Kotlin course", category = "Development")
+        val instructor  = Instructor(id = null, name = "Instructor entity")
+        instructorRepository.save(instructor)
+        val course = Course(id = null, name = "Kotlin course", category = "Development", instructor = instructor)
         courseRepository.save(course)
         webTestClient.delete().uri("/v1/course/${course.id}").exchange().expectStatus().isNoContent
     }

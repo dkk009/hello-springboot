@@ -31,9 +31,15 @@ class GlobalErrorHandler: ResponseEntityExceptionHandler() {
         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.joinToString(","){it})
     }
 
+    @ExceptionHandler(InstructorNotFoundException::class)
+    fun handleInstructorNotFoundException(exception: InstructorNotFoundException, request: WebRequest): ResponseEntity<Any>{
+     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.message)
+    }
     @ExceptionHandler(Exception::class)
     fun handleAllException(ex:Exception,request: WebRequest): ResponseEntity<Any>{
         logger.error("Exception occurred:$ex", ex)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.message)
     }
+
+
 }

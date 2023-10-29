@@ -20,3 +20,8 @@ curl -i \
 -X PUT http://localhost:8080/v1/course/2
 
 curl -i -X DELETE http://localhost:8080/v1/course/2
+
+curl -i \
+-d '{"name":"Testing curl"}' \
+-H "Content-Type: application/json" \
+-X POST http://localhost:8080/v1/instructor
