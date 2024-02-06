@@ -16,6 +16,8 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
     show-sql: true
+    hibernate:
+      ddl-auto: create-drop #This will drop the database every new running time, not recommended in prod
     properties:
       hibernate:
         jdbc:

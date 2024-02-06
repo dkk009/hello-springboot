@@ -5,12 +5,14 @@ import com.deepak.course.demo.entity.Course
 import com.deepak.course.demo.entity.Instructor
 import com.deepak.course.demo.repository.CourseRepository
 import com.deepak.course.demo.repository.InstructorRepository
+import com.deepak.course.demo.util.TestPostgresDatabaseInit
 import com.deepak.course.demo.util.courseList
 import com.deepak.course.demo.util.instructorList
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -22,7 +24,8 @@ import org.springframework.web.util.UriComponentsBuilder
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-class CourseControllerIntegrationTest {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class CourseControllerIntegrationTest : TestPostgresDatabaseInit() {
     @Autowired
     lateinit var webTestClient: WebTestClient
 
@@ -74,7 +77,7 @@ class CourseControllerIntegrationTest {
             CourseDTO::class.java
         ).returnResult().responseBody
         println("Course List: ${remoteList!!.size}, List:${remoteList}")
-        Assertions.assertTrue(remoteList!!.size == courseList.size + 1)
+        Assertions.assertTrue(remoteList.size == courseList.size + 1)
     }
 
     @Test
@@ -139,4 +142,22 @@ class CourseControllerIntegrationTest {
         println("Course List:$courseList")
         Assertions.assertEquals(1, courseList?.size)
     }
+
+    /*
+        companion object{
+            @Container
+            val postgresDB = PostgreSQLContainer<Nothing>(DockerImageName.parse("postgres:13-alpine")).apply {
+                withDatabaseName("testdb")
+                withUsername("postgres")
+                withPassword("secret")
+            }
+
+            @JvmStatic
+            @DynamicPropertySource
+            fun properties(registry: DynamicPropertyRegistry){
+                registry.add("spring.datasource.url", postgresDB::getJdbcUrl)
+                registry.add("spring.datasource.username", postgresDB::getUsername)
+                registry.add("spring.datasource.password", postgresDB::getPassword)
+            }
+        }*/
 }

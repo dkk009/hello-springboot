@@ -1,7 +1,10 @@
 package com.deepak.course.demo.repository
 
 import com.deepak.course.demo.entity.Course
+import com.deepak.course.demo.entity.Instructor
+import com.deepak.course.demo.util.TestPostgresDatabaseInit
 import com.deepak.course.demo.util.courseList
+import com.deepak.course.demo.util.instructorList
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -9,21 +12,29 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
 import java.util.stream.Stream
 
 @DataJpaTest
-@ActiveProfiles("")
-class CourseRepositoryTest {
+@ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class CourseRepositoryTest: TestPostgresDatabaseInit(){
     @Autowired
     lateinit var courseRepository: CourseRepository
 
+    @Autowired
+    lateinit var instructorRepository: InstructorRepository
     @BeforeEach
     fun setUp() {
         courseRepository.deleteAll()
+        val instructorList = instructorRepository.saveAll(instructorList.map {
+            Instructor(id = null, name = it.name)
+        })
+
         courseRepository.saveAll(courseList.map {
-            Course(name = it.name, category = it.category, id = null)
+            Course(name = it.name, category = it.category, id = null, instructor = instructorList.first())
         })
     }
 
